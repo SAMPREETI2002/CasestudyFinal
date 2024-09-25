@@ -14,7 +14,6 @@ import bcrypt from "bcryptjs";
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import crypto from 'crypto';
-import path from 'path';
 import {
   Customer,
   Invoice,
@@ -25,9 +24,8 @@ import {
 
 const app = express();
 const PORT = 9099;
-const stripe= new Stripe(process.env.STRIPE_SECRET);
+const stripe = new Stripe(process.env.STRIPE_SECRET);
 const SECRET_KEY = process.env.JWT_SECRET;
-const PASSWORD_SECRET_KEY = process.env.PASSWORD_SECRET_KEY || 'your_default_secret_key_here';
 let otpStorage = {}; 
 
 // Configure CORS
@@ -323,7 +321,7 @@ app.post('/register', async (req, res) => {
     res.status(201).send({ auth: true, token });
   } catch (error) {
     console.error('Error registering user:', error);
-    res.status(500).send('User Already exists , Please login');
+    res.status(500).send('There was a problem registering the user.');
   }
 });
 
@@ -431,103 +429,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
-  }
-
-  try {
-    const customer = await prisma.customer.findUnique({
-      where: { customerMail: email },
-    });
-
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-
-    const resetToken = jwt.sign({ id: customer.customerId }, PASSWORD_SECRET_KEY, { expiresIn: '1h' });
-
-    const resetLink = `http://localhost:9099/reset-password?token=${resetToken}`;
-
-    // Send the reset link via email
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false, // or 'STARTTLS'
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: "kvzj vlxs aptt qtki",
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Password Reset Request",
-      text: `Click this link to reset your password: ${resetLink}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ message: "Password reset link sent to your email" });
-  } catch (error) {
-    console.error("Error in forgot password:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(process.cwd(), 'views'));
-
-app.get("/reset-password", (req, res) => {
-  const { token } = req.query;
-  res.render("reset-password", { token });
-});
-
-app.post("/reset-password", async (req, res) => {
-  const { token, newPassword, confirmPassword } = req.body;
-
-  console.log("Received data:", req.body);
-
-  if (!newPassword || !confirmPassword) {
-    return res.status(400).json({ error: "Both new password and confirm password are required" });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ error: "Passwords do not match" });
-  }
-
-  try {
-    // Verify the token
-    const decoded = jwt.verify(token, PASSWORD_SECRET_KEY);
-    const customerId = decoded.id;
-
-    // Find the customer
-    const customer = await prisma.customer.findUnique({
-      where: { customerId: customerId },
-    });
-
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-
-    // Hash the new password
-    const hashedPassword = bcrypt.hashSync(newPassword, 8);
-
-    // Update the customer's password
-    await prisma.customer.update({
-      where: { customerId: customerId },
-      data: { password: hashedPassword },
-    });
-
-    res.status(200).json({ message: "Password successfully reset" });
-  } catch (error) {
-    console.error("Error resetting password:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 /**
  * @swagger
@@ -816,7 +717,6 @@ app.post("/generateInvoice", async (req, res) => {
     res.status(500).send("Internal server error.");
   }
 });
-
 app.post("/payPostpaidInvoice", async (req, res) => {
   const { customerMail, invoiceId, changePlan } = req.body;
 
@@ -848,7 +748,7 @@ app.post("/payPostpaidInvoice", async (req, res) => {
       return res.status(404).json({ error: "Plan not found" });
     }
 
-    // Define `now` here to make it accessible later
+    // Define `now` to use it for various date updates
     let now = new Date();
 
     // Update the invoice status to 'paid'
@@ -858,21 +758,32 @@ app.post("/payPostpaidInvoice", async (req, res) => {
     });
 
     if (!changePlan) {
-      // Handle customerPlan update
+      // Handle customerPlan update if no plan change
       let customerPlan = await prisma.customerPlan.findUnique({
         where: {
           customerId_planId: {
             customerId: customer.customerId,
-            planId: customer.customerCurrPlan, // currPlan is the active planId
+            planId: customer.customerCurrPlan, // Current active planId
           },
         },
       });
-
+      customer = await prisma.customer.update({
+        where: { customerMail: customerMail },
+        data: {
+          plansList: {
+            connect: { id: customerPlan.id },
+          },
+          customerCurrPlan: plan.planId,
+        },
+        include: {
+          plansList: true, // Fetch the updated plansList
+        },
+      });
       if (!customerPlan) {
         return res.status(404).json({ error: "Customer plan not found" });
       }
 
-      // Update customerPlan with new dates
+      // Update customerPlan with new activation and due dates
       let dueDateSet = new Date(now);
       dueDateSet.setDate(now.getDate() + parseInt(plan.billingCycle)); // Set due date based on plan's billing cycle
 
@@ -884,16 +795,17 @@ app.post("/payPostpaidInvoice", async (req, res) => {
           datePurchased: now,
         },
       });
-    } else {
-      // If changePlan is false, create a new invoice
+ 
       let invoiceData = {
-                customerName: customer.customerName,
-                customerId: customer.customerId,
-                planId: plan.planId,
-                date: now,
-                planType: "POSTPAID"
-              };
+        customerName: customer.customerName,
+        customerId: customer.customerId,
+        planId: plan.planId,
+        date: now,
+        planType: "POSTPAID"
+      };
+ 
       let newInvoice = new Invoice(invoiceData);
+      // Generate a new invoice with status 'N/A'
       newInvoice = await prisma.invoice.create({
         data: {
           invoiceId:newInvoice.invoiceId,
@@ -901,139 +813,155 @@ app.post("/payPostpaidInvoice", async (req, res) => {
           customerId: customer.customerId,
           planId: plan.planId,
           units: 0, // Assuming units are the same for the new invoice
-          date: now, // Use now here
+          date: now,
           status: "N/A", // New invoice status
           amount: 0, // Assuming amount remains the same
-          planType: "POSTPAID", // Directly using "POSTPAID"
+          planType: invoice.planType, // Assuming plan type remains the same
         },
       });
+ 
+      // return res.status(200).json({
+      //   message: "Invoice paid and same plan subscribed successfully",
+      //   invoice,
+      //   newInvoice,
+      //   customer,
+      // });
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'inr',
+              product_data: { name: plan.planName }, // Assuming plan name is used here
+              unit_amount: Math.round(invoice.units * plan.ratePerUnit * 100), // Convert to smallest currency unit
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `http://localhost:3000/Paymentsuccess`,
+        cancel_url: `http://localhost:3000/ViewHistory`,
+      });
+
+      return res.status(200).json({
+        message: "Invoice paid and same plan subscribed successfully",
+        invoice,
+        newInvoice,
+        customer,
+        sessionId:session.id,
+      });
+
+    } else {
+      // If changePlan is true, update the customer's current plan
+
+      let customerPlan = await prisma.customerPlan.findUnique({
+        where: {
+          customerId_planId: {
+            customerId: customer.customerId,
+            planId: customer.customerCurrPlan, // currPlan is the active planId
+          },
+        },
+      });
+      // Update the customer's `plansList`
+    customer = await prisma.customer.update({
+      where: { customerMail: customerMail },
+      data: {
+        plansList: {
+          connect: { id: customerPlan.id },
+        },
+        customerCurrPlan: 0,
+      },
+      include: {
+        plansList: true, // Fetch the updated plansList
+      },
+    });
+ 
+      if (customerPlan) {
+        // Delete the customerPlan entry
+        await prisma.customerPlan.delete({
+          where: { id: customerPlan.id },
+        });
+      }
+ 
+      // Set the customer's currPlan to 0 (default)
+      customer = await prisma.customer.update({
+        where: { customerId: customer.customerId },
+        data: { customerCurrPlan: 0 },
+      });
+      
+      // let invoiceData = {
+      //   customerName: customer.customerName,
+      //   customerId: customer.customerId,
+      //   planId: plan.planId,
+      //   date: now,
+      //   planType: "POSTPAID"
+      // };
+      // let newInvoice = new Invoice(invoiceData);
+      // // Optionally, generate a new invoice if there's an additional cost or other changes
+      // // Based on your use case, this part can be adjusted. If no new charges, skip this part.
+      // newInvoice = await prisma.invoice.create({
+      //   data: {
+      //     invoiceId: newInvoice.invoiceId,
+      //     customerName: customer.customerName,
+      //     customerId: customer.customerId,
+      //     planId: plan.planId,
+      //     units: 0, // Assuming no new usage for the new invoice
+      //     date: now,
+      //     status: "pending", // New invoice status
+      //     amount: 0, // Assuming no immediate charge
+      //     planType: "POSTPAID",
+      //   },
+      // });
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'inr',
+              product_data: { name: plan.planName }, // Assuming plan name is used here
+              unit_amount: Math.round(invoice.units * plan.ratePerUnit * 100), // Convert to smallest currency unit
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `http://localhost:3000/Paymentsuccess`,
+        cancel_url: `http://localhost:3000/ViewHistory`,
+      });
+      
+      return res.status(200).json({
+        message: "Invoice paid successfully",
+        invoice,
+        customer,
+        sessionId: session.id, // Return sessionId for Stripe checkout
+      });
+      
+      
     }
 
-    // Stripe Checkout Session - Always executed
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'inr',
-            product_data: { name: plan.planName }, // Assuming plan name here
-            unit_amount: Math.round(invoice.units * plan.ratePerUnit * 100),
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `http://localhost:3000/Paymentsuccess`,
-      cancel_url: `http://localhost:3000/ViewHistory`,
-    });
+    // // Stripe Checkout Session - Always executed for payments
+    // const session = await stripe.checkout.sessions.create({
+    //   payment_method_types: ['card'],
+    //   line_items: [
+    //     {
+    //       price_data: {
+    //         currency: 'inr',
+    //         product_data: { name: plan.planName }, // Assuming plan name is used here
+    //         unit_amount: Math.round(invoice.units * plan.ratePerUnit * 100), // Convert to smallest currency unit
+    //       },
+    //       quantity: 1,
+    //     },
+    //   ],
+    //   mode: 'payment',
+    //   success_url: `http://localhost:3000/Paymentsuccess`,
+    //   cancel_url: `http://localhost:3000/ViewHistory`,
+    // });
 
-    // Return the response with the sessionId
-    return res.status(200).json({
-      message: "Invoice paid successfully",
-      invoice,
-      customer,
-      sessionId: session.id // Return the sessionId along with the other details
-    });
+    // Return response with sessionId and other details
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
-app.get('/downloadInvoice/:invoiceId', async (req, res) => {
-  const { invoiceId } = req.params;
- 
-  try {
-    const invoice = await prisma.invoice.findUnique({
-      where: { invoiceId: parseInt(invoiceId) },
-      include: { customer: true, plan: true },
-    });
- 
-    if (!invoice) {
-      return res.status(404).json({ error: 'Invoice not found' });
-    }
- 
-    // Create a new PDF document
-    const doc = new PDFDocument();
- 
-    // Set response headers to indicate a file download
-    res.setHeader('Content-Disposition', `attachment; filename=invoice_${invoiceId}.pdf`);
-    res.setHeader('Content-Type', 'application/pdf');
- 
-    // Pipe the PDF into the response
-    doc.pipe(res);
- 
-    // Set up PDF metadata
-    doc.info.Title = `Invoice`;
-    doc.fontSize(14).text(`Invoice`, { align: 'center', margin: 10 });
- 
-    doc.info.Author = 'TELSTAR';
- 
-    // Add the company logo (optional, if you have one)
-    // doc.image('path/to/logo.png', 50, 45, { width: 50 });
-   
-    // Add company information
-    doc
-      .fontSize(20)
-      .text('TELSTAR', { align: 'center' })
-      .fontSize(10)
-      .text('30th Main Road', { align: 'center' })
-      .text('Bengaluru, Karnataka, 560102', { align: 'center' })
-      .text('Phone: 6263528833', { align: 'center' })
-      .moveDown(2);
- 
-    // Invoice title
-    doc
-      .fontSize(18)
-      .text(`InvoiceId:- #${invoiceId}`, { align: 'center', underline: true })
-      .moveDown(1);
- 
-    // Customer Information
-    doc
-      .fontSize(12)
-      .text('Customer Information:', { underline: true })
-      .moveDown(0.5)
-      .fontSize(10)
-      .text(`Name: ${invoice.customer.customerName}`)
-      .text(`Email: ${invoice.customer.customerMail}`)
-      .text(`Phone: ${invoice.customer.customerPhone}`)
-      .moveDown(1);
- 
-    // Plan Information
-    doc
-      .fontSize(12)
-      .text('Plan Information:', { underline: true })
-      .moveDown(0.5)
-      .fontSize(10)
-      .text(`Plan Name: ${invoice.plan.planName}`)
-      .text(`Description: ${invoice.plan.description}`)
-      .text(`Billing Cycle: ${invoice.plan.billingCycle}`)
-      .moveDown(1);
- 
-    // Invoice Details
-    doc
-      .fontSize(12)
-      .text('Invoice Details:', { underline: true })
-      .moveDown(0.5)
-      .fontSize(10)
-      .text(`Date: ${invoice.date.toDateString()}`)
-      .text(`Units: ${invoice.units}`)
-      .text(`Amount: $${invoice.amount.toFixed(2)}`)
-      .text(`Status: ${invoice.status}`)
-      .moveDown(2);
- 
-    // Footer
-    doc
-      .fontSize(10)
-      .text('Thank you for your business!', { align: 'center' });
- 
-    // Finalize the PDF and end the stream
-    doc.end();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -1418,6 +1346,7 @@ app.post("/choosePlan", async (req, res) => {
     res.status(500).json({ error: error.message || "Internal server error" });
   }
 });
+
 app.post("/buyPlan", async (req, res) => {
   const { customerMail, planId, planType } = req.body;
   let plan, planInstance;
@@ -2301,7 +2230,7 @@ app.post("/checkCustomerPlanStatus", async (req, res) => {
       if (latestInvoice && latestInvoice.status === 'not paid') {
         return res.status(200).json({
           message: "A previous invoice is still unpaid. No new invoice will be generated.",
-          latestInvoice,
+          invoice:latestInvoice,
           plan
         });
       }
@@ -2329,7 +2258,6 @@ app.post("/checkCustomerPlanStatus", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 

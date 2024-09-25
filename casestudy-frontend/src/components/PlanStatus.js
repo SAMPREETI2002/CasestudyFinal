@@ -94,6 +94,7 @@ const PlanStatus = () => {
             <>
               <p><strong>Plan Name:</strong> {planData.plan.planName}</p>
               <p><strong>Days Left:</strong> {planData.daysLeft} days</p>
+              {console.log(JSON.stringify(planData))}
             </>
           ) : (
             <p>No plan information available.</p>

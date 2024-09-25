@@ -3,11 +3,15 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext'; // Import UserContext
 import './styles/auth.css';  // Import the CSS file
+
  
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
+  const [showForgotPasswordForm, setShowForgotPasswordForm] = useState(false);
   const navigate = useNavigate();
  
   // Access context setters for userEmail, isAuthenticated, and isAdmin
@@ -42,7 +46,21 @@ function LoginPage() {
       console.error('Login error:', err);
     }
   };
- 
+  // Forgot Password form submission handler
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:9099/forgot-password', {
+        email: forgotPasswordEmail,
+      });
+
+      setResetMessage(response.data.message);
+    } catch (err) {
+      setError('Failed to send password reset link');
+      console.error('Forgot password error:', err);
+    }
+  };
+
   return (
     <div className="auth-container" style={{ backgroundColor: "#fffff3" }}>
       <div className="auth-box">
@@ -73,6 +91,49 @@ function LoginPage() {
           </div>
           <button type="submit" className="button">Login</button>
         </form>
+            {/* Forgot Password Link */}
+            <p style={{ marginTop: '20px' }}>
+            <button
+              className="forgot-password-btn"
+              onClick={() => setShowForgotPasswordForm(true)}
+              style={{ fontFamily: 'Helvetica, Arial, sans-serif', color: '#1167E5', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              Forgot Password?
+            </button>
+          </p>
+  
+          {/* Forgot Password Link */}
+        <p style={{ marginTop: '20px' }}>
+          <button
+            className="forgot-password-btn"
+            onClick={() => setShowForgotPasswordForm(true)}
+            style={{ fontFamily: 'Helvetica, Arial, sans-serif', color: '#1167E5', background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            Forgot Password?
+          </button>
+        </p>
+
+        {/* Forgot Password Form */}
+        {showForgotPasswordForm && (
+          <form onSubmit={handleForgotPasswordSubmit}>
+            <h3 style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>Reset Password</h3>
+            <div className="inputGroup">
+              <label htmlFor="forgotPasswordEmail" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>Enter your email:</label>
+              <input
+                type="email"
+                id="forgotPasswordEmail"
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                required
+                className="input"
+              />
+            </div>
+            <button type="submit" className="button" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+              Send Reset Link
+            </button>
+            {resetMessage && <p className="success">{resetMessage}</p>}
+          </form>
+        )}
       </div>
     </div>
   );
