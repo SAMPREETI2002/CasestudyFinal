@@ -1,0 +1,91 @@
+/* Container for the SIM plan icons */
+.plans-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  /* Styling for the plan icon wrapper */
+  .plan-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .para{
+    color: black;
+    font-size: 25px;
+  }
+  
+  /* Icon Link styles with shadow effect */
+  .icon-link {
+    text-decoration: none;
+    color: black; /* Set text color to black */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    padding: 2rem;
+    padding-bottom: 0;
+    border: 1px solid #ccc; /* Border for form elements */
+    border-radius: 10px;
+    max-width: 9rem;
+  
+    /* Adding box shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Hover effect to enlarge and intensify the shadow */
+  .icon-link:hover {
+    transform: scale(1.05); /* Slight enlargement on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 8px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Plan Label below each icon */
+  .plan-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+    text-transform: uppercase;
+    color: black;
+  }
+  
+  /* Hover effect for the icons */
+  .plan-icon:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Adjust icon size and styles */
+  .fa-sim-card {
+    color: #606366; /* You can change the color of the icon here */
+  }
+  
+  /* General Landing Page styles */
+  .landing-title {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 3rem;
+  }
+  
+  .landing-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: black;
+    font-family: Helvetica, sans-serif;
+  }
+  
+  .section-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+  

@@ -1,0 +1,71 @@
+
+
+/* Heading styling */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #083D77; /* Darker shade for contrast */
+  font-family: 'Helvetica', sans-serif; /* Clean font style */
+}
+
+/* Form container with vertical layout */
+.form-container-vertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Input, select, textarea styling */
+input, select, textarea {
+  width: 150%;
+  margin-bottom: 15px;
+  padding: 12px; /* Increased padding for a spacious feel */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 8px; /* Smooth rounded corners */
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #083D77; /* Highlighted border on focus */
+  box-shadow: 0 0 8px rgba(8, 61, 119, 0.2); /* Light focus shadow */
+  outline: none; /* Remove default outline */
+}
+
+/* Button styling */
+.admin-button {
+  background-color: black;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.admin-button:hover {
+  background-color: black;
+  color: white;
+  transform: translateY(-2px); /* Lift effect on hover */
+}
+
+button:active {
+  transform: translateY(0); /* Reset transform on click */
+}
+
+/* Error message styling */
+p {
+  color: #e74c3c; /* Red color for errors */
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+/* General form elements styling */
+input, select, textarea, button {
+  font-family: 'Helvetica', sans-serif; /* Consistent font style */
+  margin: 10px;
+}

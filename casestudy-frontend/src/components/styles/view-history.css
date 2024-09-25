@@ -1,0 +1,57 @@
+/* Container for the entire plan display */
+.plan-display-container {
+  display: flex;
+  flex-wrap: wrap; /* Enable wrapping to avoid horizontal scrolling */
+  justify-content: center; /* Center the plan items */
+  gap: 20px; /* Add gap between the plan items */
+  padding: 20px;
+}
+
+/* Styling for each plan item */
+.plan-item {
+  background-color: black;
+  border-radius: 8px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex-grow: 1; /* Make the plan items flexible */
+  width: calc(33.33% - 40px); /* Set the width to take up 3 columns with gap */
+  max-width: 400px; /* Limit max width for responsiveness */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid black; /* Add border */
+  text-align: center; /* Center-align text */
+  color: white;
+}
+
+/* Enhanced hover effect for the plan item */
+.plan-item:hover {
+  background-color: rgb(34, 34, 34);
+  transform: translateY(-5px) scale(1.02); /* Lift and slightly enlarge the box */
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); /* Darker shadow for depth */
+  border-color: #1167E5; /* Change border color on hover for emphasis */
+}
+
+/* Heading styling inside the plan item */
+.plan-title {
+  font-size: 20px;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+/* Styling for plan descriptions */
+.planDescription {
+  color: white;
+}
+
+/* Additional styles for general text in the plan item */
+.plan-item p {
+  color: white;
+  margin: 0; /* Remove default margin */
+}
+
+/* Styling for container's main title */
+.plan-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: black;
+}

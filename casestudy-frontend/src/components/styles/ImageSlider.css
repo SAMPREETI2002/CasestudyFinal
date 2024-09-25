@@ -1,0 +1,63 @@
+/* Image Slider Container */
+.slider-container {
+  position: relative;
+  width: 99vw; /* Full width of the viewport */
+  height: calc(70vh - 40px); /* Full height minus padding (20px top and bottom) */
+  overflow: hidden; /* Hide overflow to prevent scrollbars */
+  background-color: #1a1a1a; /* Dark background to match the theme */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+}
+
+/* Slider Wrapper */
+.slider-wrapper {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+  width: 100%; /* Takes full width */
+}
+
+/* Individual Slider Image */
+.slider-image {
+  flex: 0 0 100%; /* Take full width of the slider container */
+  height: 70vh; /* Keep aspect ratio */
+  max-height: calc(100vh - 40px); /* Ensure images don't exceed the container height */
+  object-fit: cover; /* Cover the area without distortion */
+  
+}
+
+/* Dot Navigation */
+.slider-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10; /* Ensure dots are above the images */
+}
+
+.slider-dot {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.slider-dot.active {
+  background-color: #0d6efd; /* Bootstrap primary blue for active dot */
+  transform: scale(1.2); /* Slightly enlarge active dot */
+}
+
+/* Hover Effect for Dots */
+.slider-dot:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* Brighter on hover */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .slider-dot {
+    width: 12px;
+    height: 12px;
+  }
+}

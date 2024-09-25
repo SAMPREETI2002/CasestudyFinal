@@ -1,0 +1,149 @@
+/* Custom Navbar Styles */
+.navbar {
+  background-color: #1a1a1a; /* Dark background for a modern look */
+  padding: 15px 20px;
+  border-bottom: 2px solid #0d6efd; /* Accent color for a modern touch */
+  height: 70px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #0d6efd; /* Highlight effect on hover */
+}
+
+/* Nav links */
+.navbar-nav .nav-link {
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 8px 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0d6efd; /* Bootstrap primary blue */
+  background-color: rgba(255, 255, 255, 0.1); /* Light background on hover */
+}
+
+/* Dropdown styling */
+.dropdown-toggle {
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 8px 15px;
+  background-color: transparent;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  color: #0d6efd;
+}
+
+.dropdown-menu {
+  background-color: #1a1a1a; /* Match with navbar */
+  border: none;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.dropdown-item {
+  color: black;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #0d6efd; /* Highlight with primary blue */
+  color: #ffffff;
+}
+
+.dropdown-divider {
+  border-color: #ffffff;
+}
+
+/* Navbar Toggler for small screens */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  background-color: white;
+  width: 25px;
+  height: 2px;
+  position: relative;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  content: '';
+  background-color: white;
+  width: 25px;
+  height: 2px;
+  position: absolute;
+  left: 0;
+}
+
+.navbar-toggler-icon::before {
+  top: -8px;
+}
+
+.navbar-toggler-icon::after {
+  top: 8px;
+}
+
+/* Profile email text */
+.dropdown-item {
+  color: #ffffff; /* White text for user email */
+  font-weight: bold;
+}
+
+/* Logout button */
+.logout-btn {
+  color: #ffffff;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  padding: 10px 20px;
+  width: 100%;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .navbar-nav .nav-link {
+    margin: 5px 0;
+    padding: 10px;
+  }
+
+  .dropdown {
+    margin-top: 10px;
+  }
+}
+
+@media (min-width: 992px) {
+  .navbar-nav .nav-link {
+    margin-right: 20px;
+  }
+}

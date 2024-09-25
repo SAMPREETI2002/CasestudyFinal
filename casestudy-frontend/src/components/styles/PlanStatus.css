@@ -1,0 +1,91 @@
+/* src/components/PlanStatus.css */
+.plan-status-box {
+    background-color: #f9f9f9;
+    border: 2px solid #083D77;
+    border-radius: 8px;
+    padding: 20px;
+    width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+  
+  .plan-status-box h2 {
+    color: #083D77;
+    margin-bottom: 20px;
+    font-size: 25px;
+  }
+  
+  .plan-status-box p {
+    margin: 10px 0;
+    color: #333;
+  }
+  
+  .plan-status-box strong {
+    color: #083D77;
+  }
+  
+  .invoice-info {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e6f4f1;
+    border-left: 4px solid #48CFCB;
+  }
+  
+  .invoice-info h3 {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .invoice-info p {
+    margin: 5px 0;
+    color: #333;
+  }
+  
+  /* Add this to PlanStatus.css */
+
+.plan-status-box {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.invoice-info {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.renew-plan {
+  display: flex;
+  justify-content: flex-start; /* Align content to the left */
+  margin-top: 10px; /* Space between the invoice info and this section */
+  
+}
+.renew-plan input{
+  margin-left: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 1rem;
+}
+.renew-plan p{
+  margin-left: 1rem;
+  font-weight: 600;
+}
+.pay-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 7px;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+.pay-button:hover {
+  background-color: black;
+  color: #1657E1;
+}
