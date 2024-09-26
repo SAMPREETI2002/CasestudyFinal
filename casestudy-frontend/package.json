@@ -49,5 +49,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy":"https://nextjs-cors-anywhere.vercel.app/api?endpoint=18.204.212.181:9099"
+  "proxy":"https://nextjs-cors-anywhere.vercel.app/api?endpoint=http://18.204.212.181:9099"
 }
