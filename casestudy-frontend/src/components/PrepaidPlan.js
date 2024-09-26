@@ -13,12 +13,12 @@ const PrepaidPlans = () => {
   const [prepaidPlans, setPrepaidPlans] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const apiURL = 'http://localhost:9099';
+  const apiURL = `${process.env.REACT_APP_BACKEND_PORT}`;
 
   useEffect(() => {
     const fetchPrepaidPlans = async () => {
       try {
-        const response = await axios.get('http://localhost:9099/prepaidPlans'); // Adjust URL if needed
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_PORT}/prepaidPlans`); // Adjust URL if needed
         setPrepaidPlans(response.data.prepaidPlans);
       } catch (error) {
         setError('Error fetching prepaid plans');

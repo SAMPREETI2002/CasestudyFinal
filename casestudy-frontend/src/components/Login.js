@@ -21,7 +21,7 @@ function LoginPage() {
     e.preventDefault();
  
     try {
-      const response = await axios.post('http://localhost:9099/login', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/login`, {
         email,
         password,
       });
@@ -50,7 +50,7 @@ function LoginPage() {
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:9099/forgot-password', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/forgot-password`, {
         email: forgotPasswordEmail,
       });
 
@@ -101,17 +101,6 @@ function LoginPage() {
               Forgot Password?
             </button>
           </p>
-  
-          {/* Forgot Password Link */}
-        <p style={{ marginTop: '20px' }}>
-          <button
-            className="forgot-password-btn"
-            onClick={() => setShowForgotPasswordForm(true)}
-            style={{ fontFamily: 'Helvetica, Arial, sans-serif', color: '#1167E5', background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            Forgot Password?
-          </button>
-        </p>
 
         {/* Forgot Password Form */}
         {showForgotPasswordForm && (

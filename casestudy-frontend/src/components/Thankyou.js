@@ -31,7 +31,7 @@ const ThankYou = () => {
 
             if (state.planType === 'POSTPAID' && state.invoiceId) {
               // If the planType is POSTPAID, trigger the /payPostpaidInvoice endpoint
-              const response = await axios.post("http://localhost:9099/payPostpaidInvoice", {
+              const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/payPostpaidInvoice`, {
                 customerMail: userEmail,
                 invoiceId: state.invoiceId,
                 changePlan: state.changePlan || false, // Default to false if not provided
@@ -44,7 +44,7 @@ const ThankYou = () => {
               }
             } else {
               // Otherwise, trigger the /buyPlan endpoint
-              const buyPlanResponse = await axios.post("http://localhost:9099/choosePlan", {
+              const buyPlanResponse = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/choosePlan`, {
                 customerMail: userEmail,
                 planName: planResponse.data.plan.planName,
                 planType: state.planType,

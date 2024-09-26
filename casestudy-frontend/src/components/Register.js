@@ -99,7 +99,7 @@ function RegisterPage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:9099/register', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/register`, {
         name,
         email,
         password,

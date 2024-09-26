@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const downloadInvoice = async (invoiceId) => {
   try {
-    const response = await axios.get(`http://localhost:9099/downloadInvoice/${invoiceId}`, {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_PORT}/downloadInvoice/${invoiceId}`, {
       responseType: 'blob', // Important for receiving a binary file
     });
 

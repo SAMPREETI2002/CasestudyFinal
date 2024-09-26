@@ -22,7 +22,7 @@ function AdminDashboard() {
 
   const handleChangeDueDate = async () => {
     try {
-      const response = await axios.post('http://localhost:9099/setDueDateTwoDaysFromNow', { customerMail: email });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/setDueDateTwoDaysFromNow`, { customerMail: email });
       setMessage(response.data.message);
       setError('');
       setEmail(''); // Clear the input field

@@ -21,7 +21,7 @@ const Checkout = () => {
       if (planId && planType) {
         try {
           // Fetch the plan details using the planId
-          const response = await axios.post('http://localhost:9099/viewPlan', { planId });
+          const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/viewPlan`, { planId });
           if (response.status === 201 && response.data.plan) {
             setPlanDetails(response.data.plan);
             setPlanType(planType); // Set planType state
@@ -41,7 +41,7 @@ const Checkout = () => {
 
   const validateContactDetails = async () => {
     try {
-      const response = await axios.post('http://localhost:9099/validateCustomer', { email });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/validateCustomer`, { email });
       const { customerPhone } = response.data;
 
       if (customerPhone !== phone) {

@@ -14,14 +14,14 @@ function InvoiceDisplay() {
   useEffect(() => {
     const fetchInvoiceHistory = async () => {
       try {
-        const response = await axios.post('http://localhost:9099/viewInvoiceHistory', { customerMail: userEmail });
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/viewInvoiceHistory`, { customerMail: userEmail });
         const { invoiceList } = response.data;
 
         const sortedInvoices = invoiceList.sort((a, b) => new Date(b.date) - new Date(a.date));
         setInvoices(sortedInvoices);
 
         const planRequests = sortedInvoices.map(invoice =>
-          axios.post('http://localhost:9099/viewPlan', { planId: invoice.planId })
+          axios.post(`${process.env.REACT_APP_BACKEND_PORT}/viewPlan`, { planId: invoice.planId })
         );
         const planResponses = await Promise.all(planRequests);
         const plans = planResponses.reduce((acc, response) => {

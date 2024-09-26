@@ -6,7 +6,7 @@ import { checkPlanStatus } from './CheckPlanStatus';
 import './styles/PlanStatus.css';
 
 const stripePromise = loadStripe('pk_test_51PzMJ92LE9UHjUCiRYxbweuMYXgYud6jst1hGkeWirgTU3mBVfPqqkTmEX4uXSPqUV10ab9uviGTBAsjOgsJJUPg00ydnLub8D');
-const apiURL = 'http://localhost:9099';
+const apiURL = `${process.env.REACT_APP_BACKEND_PORT}`;
 
 const PlanStatus = () => {
   const { userEmail } = useContext(UserContext);

@@ -29,7 +29,7 @@ function AddPlans() {
     const checkPlanExistence = async () => {
       if (plan.planName) {
         try {
-          const response = await fetch(`http://localhost:9099/admin/checkPlanName/${plan.planName}`);
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_PORT}/admin/checkPlanName/${plan.planName}`);
           const data = await response.json();
           setPlanExists(data.exists);
         } catch (err) {

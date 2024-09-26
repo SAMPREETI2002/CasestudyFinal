@@ -11,14 +11,14 @@ function ViewHistory() {
   useEffect(() => {
     const fetchCustomerHistory = async () => {
       try {
-        const response = await axios.post('http://localhost:9099/viewHistory', { customerMail: userEmail });
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/viewHistory`, { customerMail: userEmail });
         const { plansList } = response.data;
         console.log('Plans List:', plansList); // Debug log for plansList
 
         if (plansList.length > 0) {
           // Fetch details for each plan
           const detailsPromises = plansList.map(plan =>
-            axios.post('http://localhost:9099/viewPlan', { planId: plan.planId })
+            axios.post(`${process.env.REACT_APP_BACKEND_PORT}/viewPlan`, { planId: plan.planId })
           );
 
           const detailsResponses = await Promise.all(detailsPromises);

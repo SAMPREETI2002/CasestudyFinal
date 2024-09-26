@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const checkPlanStatus = async (userEmail) => {
   try {
-    const response = await axios.post('http://localhost:9099/checkCustomerPlanStatus', {
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_PORT}/checkCustomerPlanStatus`, {
       customerMail: userEmail
     });
     

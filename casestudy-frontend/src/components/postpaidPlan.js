@@ -12,7 +12,7 @@ const PostpaidPlans = () => {
   useEffect(() => {
     const fetchPostpaidPlans = async () => {
       try {
-        const response = await axios.get('http://localhost:9099/postpaidPlans'); // Adjust URL if needed
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_PORT}/postpaidPlans`); // Adjust URL if needed
         setPostpaidPlans(response.data.postpaidPlans);
       } catch (error) {
         setError('Error fetching postpaid plans');

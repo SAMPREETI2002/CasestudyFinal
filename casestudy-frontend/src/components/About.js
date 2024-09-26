@@ -6,10 +6,10 @@ import person3Img from '../assets/images/person3.avif';
 import person4Img from '../assets/images/person4.jpg';
 import person5Img from '../assets/images/person5.jpg';
 import person6Img from '../assets/images/person6.png';
-
+ 
 const About = () => {
     return (
-        <div>
+        <div className='landing-container'>
             <div className="about-container">
                 <h1>About Us</h1>
                 <p style={{textAlign: 'justify', lineHeight: '1.8', fontSize: '18px', color: '#343434'}}>
@@ -17,7 +17,7 @@ const About = () => {
     Founded with the goal of making connectivity accessible to everyone, we have grown into a trusted name in the telecom industry, serving millions of customers with integrity, transparency, and exceptional customer service. Our state-of-the-art infrastructure and dedication to constant innovation ensure that you stay connected anytime, anywhere.
 </p>
             </div>
-            
+           
             <div className="customer-reviews">
                 <h2>What Our Customers Say</h2>
                 <div className="reviews-grid">
@@ -50,5 +50,5 @@ const About = () => {
         </div>
     );
 }
-
+ 
 export default About;
