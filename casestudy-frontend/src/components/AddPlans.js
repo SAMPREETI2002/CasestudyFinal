@@ -67,7 +67,7 @@ function AddPlans() {
     }
 
     try {
-      const response = await fetch('http://localhost:9099/admin/addPlan', {
+      const response = await fetch(process.env.REACT_APP_BACKEND_PORT+'/admin/addPlan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

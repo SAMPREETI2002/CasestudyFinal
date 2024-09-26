@@ -22,7 +22,7 @@ const ThankYou = () => {
       if (state && state.planId && state.planType) {
         try {
           // Fetch the plan name using the planId
-          const planResponse = await axios.post("http://localhost:9099/viewPlan", {
+          const planResponse = await axios.post(process.env.REACT_APP_BACKEND_PORT+'/viewPlan', {
             planId: state.planId,
           });
 
